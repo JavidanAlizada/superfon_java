@@ -5,7 +5,9 @@ import superfon.repository.connection.DatabaseConnector;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,7 +18,28 @@ public class SqlQuery {
     private Connection connection = DatabaseConnector.getConnection();
 
     public List<Customer> getAllCustomers() {
-        return null;
+        List<Customer> customers = new ArrayList<>();
+        Customer customer = null;
+        try {
+            String sql = "SELECT * FROM Customer";
+            if (connection != null) {
+                pst = connection.prepareStatement(sql);
+                ResultSet rs = pst.executeQuery();
+                while (rs.next()) {
+                    customer = new Customer();
+                    customer.setFullName(rs.getString("fullname"));
+                    customer.setPhoneNumber(rs.getString("phone_number"));
+                    customer.setGender(rs.getString("gender"));
+                    customer.setBirthDate(rs.getString("birth_date"));
+                    customer.setMaritalStatus(rs.getString("marital_status"));
+                    customer.setTimeStamp(rs.getString("timestamp"));
+                    customers.add(customer);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return customers;
     }
 
     public Customer getCustomerByPhoneNumber(String phoneNumber) {
