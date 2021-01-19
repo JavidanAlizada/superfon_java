@@ -1,5 +1,6 @@
 package superfon.repository.query;
 
+import org.springframework.stereotype.Repository;
 import superfon.model.Customer;
 import superfon.repository.connection.DatabaseConnector;
 
@@ -11,11 +12,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@Repository
 public class SqlQuery {
 
     private PreparedStatement pst = null;
 
     private Connection connection = DatabaseConnector.getConnection();
+
 
     public List<Customer> getAllCustomers() {
         List<Customer> customers = new ArrayList<>();
@@ -33,6 +36,7 @@ public class SqlQuery {
                     customer.setBirthDate(rs.getString("birth_date"));
                     customer.setMaritalStatus(rs.getString("marital_status"));
                     customer.setTimeStamp(rs.getString("timestamp"));
+                    customer.setSerialNumber(rs.getString("serialNumber"));
                     customers.add(customer);
                 }
             }
@@ -42,8 +46,32 @@ public class SqlQuery {
         return customers;
     }
 
-    public Customer getCustomerByPhoneNumber(String phoneNumber) {
-        return null;
+    public Customer getCustomerBySerialNumber(String serialNumber) {
+
+        Customer customer = null;
+        try {
+            String sql = "SELECT * FROM Customer WHERE Customer.serialNumber=?";
+            if (connection != null) {
+                pst = connection.prepareStatement(sql);
+                pst.setString(1, serialNumber);
+                ResultSet rs = pst.executeQuery();
+                boolean hasAny = true;
+                while (rs.next() && hasAny) {
+                    customer = new Customer();
+                    customer.setFullName(rs.getString("fullname"));
+                    customer.setPhoneNumber(rs.getString("phone_number"));
+                    customer.setGender(rs.getString("gender"));
+                    customer.setBirthDate(rs.getString("birth_date"));
+                    customer.setMaritalStatus(rs.getString("marital_status"));
+                    customer.setTimeStamp(rs.getString("timestamp"));
+                    customer.setSerialNumber(rs.getString("serialNumber"));
+                    hasAny = false;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return customer;
     }
 
     public Customer save(Customer customer) {
@@ -55,8 +83,8 @@ public class SqlQuery {
         try {
             String sql =
                     "INSERT INTO Customer" +
-                            "(fullname, phone_number, gender, birth_date, marital_status, timestamp)" +
-                            " VALUES(?,?,?,?,?,?)";
+                            "(fullname, phone_number, gender, birth_date, marital_status, timestamp, serialNumber)" +
+                            " VALUES(?,?,?,?,?,?,?)";
             if (connection != null) {
                 try {
                     connection.setAutoCommit(false);
@@ -69,6 +97,7 @@ public class SqlQuery {
                             pst.setString(4, customer.getBirthDate());
                             pst.setString(5, customer.getMaritalStatus());
                             pst.setString(6, customer.getTimeStamp());
+                            pst.setString(7, customer.getSerialNumber());
                             pst.addBatch();
                         } catch (SQLException e) {
                             e.printStackTrace();

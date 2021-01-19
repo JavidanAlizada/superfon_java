@@ -17,4 +17,5 @@ public class Customer {
     private String birthDate;
     private String maritalStatus;
     private String timeStamp;
+    private String serialNumber;
 }
