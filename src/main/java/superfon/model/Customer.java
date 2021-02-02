@@ -2,8 +2,6 @@ package superfon.model;
 
 import lombok.*;
 
-import java.sql.Date;
-
 @Setter
 @Getter
 @NoArgsConstructor
@@ -18,4 +16,7 @@ public class Customer {
     private String maritalStatus;
     private String timeStamp;
     private String serialNumber;
+    private String qrCodeContent;
+    private String password;
+    private Integer status;
 }
