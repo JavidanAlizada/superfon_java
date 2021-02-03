@@ -11,7 +11,7 @@ public class Main {
         SpringApplication.run(Main.class, args);
         while (true) {
             new CustomerService().saveCustomers();
-            Thread.sleep(60000);
+            Thread.sleep(30000);
         }
 //        System.out.println(new CustomerService().getAllCustomers());
 //        System.out.println(new CustomerService().getBySerialNumber("AZE05677777"));
